@@ -1,8 +1,10 @@
 from openai import AsyncOpenAI
 
-from config import OPENAI_API_KEY, OPENAI_MODEL
+from config import GROQ_API_KEY, GROQ_BASE_URL, GROQ_MODEL
 
-client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+# Groq exposes an OpenAI-compatible API, so we reuse the openai SDK
+# and just point it at Groq's base_url instead of OpenAI's.
+client = AsyncOpenAI(api_key=GROQ_API_KEY, base_url=GROQ_BASE_URL)
 
 SYSTEM_PROMPT = (
     "You are English Coach, a friendly, encouraging English tutor chatting with a "
@@ -25,7 +27,7 @@ async def get_coaching_reply(user_message: str, history: list[dict] | None = Non
     messages.append({"role": "user", "content": user_message})
 
     response = await client.chat.completions.create(
-        model=OPENAI_MODEL,
+        model=GROQ_MODEL,
         messages=messages,
         max_tokens=300,
         temperature=0.7,
